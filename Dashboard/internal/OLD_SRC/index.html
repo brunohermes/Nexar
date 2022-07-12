@@ -1,0 +1,83 @@
+<html>
+    <head>
+<title>3D Engine</title>    
+</head>
+<body>
+    <style>
+   *{
+    max-width: auto;    
+    height: auto;
+    overflow:hidden !important;
+    }
+    </style>
+    <script src="three.min.js"></script>
+    <script type="module" src="./OrbitControls.js"></script>
+    <script type="module"src="./GLTFLoader.js"></script>
+    <script type="module">
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js'; 
+
+    let scene, camera, renderer, model, controls, hemiLight, light;
+    
+    function init(){
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x181e2e);
+        hemiLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 4);
+        scene.add(hemiLight);
+        light = new THREE.SpotLight(0xffa95c, 3);
+        light.position.set(50,50,50);
+        light.castShadow = true;
+        light.shadow.bias = -0.0001;
+        light.shadow.mapSize.width = 1024*4;
+        light.shadow.mapSize.height = 1024*4;
+        scene.add(light);       
+
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 5000);
+        camera.position.set(3, 0, 8);
+        
+        //scene.add(new THREE.AxesHelper(500));
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMappingExposure = 1.7;
+        renderer.shadowMap.enabled = true;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+       /** 
+       let loader = new THREE.GLTFLoader();
+       loader.load("model.gltf", function(gltf){
+        scene.add(gltf.scene);
+       });
+       **/
+      new THREE.GLTFLoader().load('model.gltf', result =>{
+        model = result.scene.children[0];
+        model.position.set(0, 0, 0);
+        model.traverse(n=>{
+            if(n.isMesh){
+                n.castShadow = true;
+                n.receiveShadow = true;
+                if(n.material.map) n.material.map.anisotropy = 16;
+            }
+        });
+        scene.add(model);
+        
+        animate();
+      });
+       
+    }
+    function animate(){
+        
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+        light.position.set(
+        camera.position.x + 10,
+        camera.position.y + 10,
+        camera.position.z + 10,
+        );
+    }
+    init();
+        
+    </script>
+</body>
+</html>
