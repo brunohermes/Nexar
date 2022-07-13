@@ -157,6 +157,7 @@
                                 $cstt = $row['cst'];
                                 $idf = $row['id'];
                                 $dFunc = "Delete.php?id=".$idf;
+                                $eFunc = "Edit.php?id=".$idf;
 
                                 
                                 $html = <<< EOD
@@ -164,11 +165,11 @@
                                 <td><a href="#{$projname}" onmouseover="document.getElementById('emb').src='{$projpath}'">{$projname}</a></td> 
                                 <td>{$projdate}</td>
                                 <td class="{$cstt}">{$projst}</td>
-                                <td class="primary"><a href="#" onclick="
+                                <td class="primary"><a href="{$eFunc}" onclick="
                                 swal({ html:true, title:'{$projname}', text:''});
                                 ">Edit</a></td>
 
-                                <td class="primary"><a href="" style="color: #ff616f;" onclick="
+                                <td class="primary"><a href="#" style="color: #ff616f;" onclick="
                                 swal({
                                     title: 'Are you sure?',
                                     text: 'Once deleted, the project cannot be accessed anymore!',
@@ -177,17 +178,24 @@
                                     dangerMode: true,
                                   })
                                   .then((willDelete) => {
-                                    if (willDelete) {
-                                      swal('Project Deleted, if you think you made a mistake by deleting this project, please contact the administrator.', {
+                                    if (willDelete) 
+                                    {
+                                      swal('Project Deleted, if you think you made a mistake by deleting this project, please contact the administrator.',
+                                    
+                                      {
                                         icon: 'success',
-                                      });
-                                    } else {
+                                      }).then(
+                                        function () {
+                                        window.location.href = '{$dFunc}';
+                                        }
+                                );
+                                    }else {
                                       swal('Your imaginary file is safe!');
                                     }
-                                  });
+                                  }
+                                );
                                 ">Delete</a></td>
-                                
-                                
+                            
                                 </tr>
                                 EOD;
                               echo $html;
@@ -209,7 +217,7 @@
                 <i class='bx bx-menu-alt-left' ></i>
                 </button>
                 <div class="theme-toggler">
-                <i class='bx bxs-sun active' ></i>
+                <i class='bx bxs-sun' ></i>
                 <i class='bx bxs-moon'  ></i>
                 </div>
                 <div class="profile">
@@ -229,7 +237,7 @@
                 <div class="dpreview">
                     <div class="updatepreview">
                              <div class="modelviewer">
-                              <embed id="emb" class="viewmodule" src=""></embed>
+                              <embed id="emb" class="viewmodule" src="" width="98%"></embed>
                               </div> 
                      </div>
                 </div>
@@ -252,12 +260,37 @@
 
 
     <script>
-        const sideMenu = document.querySelector("aside");
+          const sideMenu = document.querySelector("aside");
         const menuBtn = document.querySelector("#menu-btn");
         const closeBtn = document.querySelector("#closebtn");
         const themeToggler = document.querySelector(".theme-toggler");
         const news = document.getElementById("upd");
+      
+        var darkMode;
+        var lightMode;
+        var dTime = (new Date()).getHours(); //Get time of day 24h format
+        var dcheck;
         
+        if(dTime > 7 && dTime < 18){
+            console.log("day");
+            console.log(dTime);
+            dcheck = "day";
+        }else{
+            console.log("night");
+            console.log(dTime);
+            dcheck = "night";
+        }
+
+        if(dcheck == "night"){
+            document.body.classList.add('dark-theme-variables');
+            themeToggler.querySelector('i:nth-child(2)').classList.toggle('active');
+        }else if(dcheck == "day"){
+            document.body.classList.remove('dark-theme-variables');
+            themeToggler.querySelector('i:nth-child(1)').classList.toggle('active');
+        }
+
+
+
         menuBtn.addEventListener('click', () => {
             sideMenu.style.display = 'block';
         });
@@ -266,27 +299,16 @@
             sideMenu.style.display = 'none';
         });
         
+
+
+
         themeToggler.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme-variables');
             themeToggler.querySelector('i:nth-child(1)').classList.toggle('active');
             themeToggler.querySelector('i:nth-child(2)').classList.toggle('active');
+
             
         });
-
-        var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    }
-  });
-}
     </script>
                        
 </body>

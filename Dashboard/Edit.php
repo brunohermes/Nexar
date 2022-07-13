@@ -3,13 +3,24 @@
     include_once('../includes/config.php');
     include_once('master.php');
     $logado = $_SESSION['email'];
-    
+    $hostExt = "118268.duckdns.org/Dashboard/";
     $darkmode = " dark-theme-variables"; 
     $themetoggler = "theme-toggler";
 
     $sql2 = "SELECT * FROM users WHERE email = '$logado'";
     $resulto = $conexao->query($sql2);
     $user_data = mysqli_fetch_assoc($resulto);
+
+    $id = $_GET['id'];
+        
+    $projectConsult = "SELECT * FROM projects WHERE id='$id'";
+    $sql5 = mysqli_query($conexao, $projectConsult)  or die(mysqli_error($db));
+    $projectData = mysqli_fetch_assoc($sql5);
+    $extProjPath = $hostExt.$projectData['projectpath'];
+    // echo $projectData['projectname'];
+
+    
+
 
     $fn = $user_data['firstname']." ".$user_data['lastname'];
     $plan = $user_data['plan'];
@@ -144,18 +155,26 @@
         </aside>
         
         <main>
-            <h1><?php echo $page_title ?></h1>
+            <h1><?php echo $projectData['projectname']; ?></h1>
             
             <!-- Blocos  -->
             <div class="ep-main">
-            <iframe width="350" height="350" src="<?php echo $projpath ?>" frameborder="0" allowfullscreen></iframe>
+            <iframe width="350" height="350" src="<?php echo $projectData['projectpath']; ?>" frameborder="0" allowfullscreen></iframe>
             
              
                 <div class="inputs">
                     <h3>Project Name</h3>
-                    <input type="text" class="txt" placeholder="<?php echo $projname ?>"></input>
+                    <input type="text" class="txt" placeholder="<?php echo $projectData['projectname']; ?>"></input>
                     <h3>Project Name</h3>
-                    <input type="text" class="txt" placeholder="<?php echo $projname ?>"></input>
+                    <input type="text" class="txt" placeholder="<?php echo $projectData['projectpath']; ?>"></input><br><br>
+                    <h3>QRCode</h3><br>
+                    <canvas id="qr"></canvas>
+                    <script>
+                    var qr = new QRious({
+                    element: document.getElementById('qr'),
+                    value: '<?php echo $extProjPath; ?>'
+                    });
+                    </script>
                 </div>
                 </div>
         </main>
@@ -167,7 +186,7 @@
                 <i class='bx bx-menu-alt-left' ></i>
                 </button>
                 <div class="theme-toggler">
-                <i class='bx bxs-sun active' ></i>
+                <i class='bx bxs-sun' ></i>
                 <i class='bx bxs-moon'  ></i>
                 </div>
                 <div class="profile">
@@ -188,28 +207,8 @@
     
 
 
-    <script>
-        const sideMenu = document.querySelector("aside");
-        const menuBtn = document.querySelector("#menu-btn");
-        const closeBtn = document.querySelector("#closebtn");
-        const themeToggler = document.querySelector(".theme-toggler");
-        const news = document.getElementById("upd");
-        
-        menuBtn.addEventListener('click', () => {
-            sideMenu.style.display = 'block';
-        });
-
-        closeBtn.addEventListener('click', () =>{
-            sideMenu.style.display = 'none';
-        });
-        
-        themeToggler.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme-variables');
-            themeToggler.querySelector('i:nth-child(1)').classList.toggle('active');
-            themeToggler.querySelector('i:nth-child(2)').classList.toggle('active');
-            
-        });
-    </script>
+    <script src="content.js"></script>
+    
                        
 </body>
 

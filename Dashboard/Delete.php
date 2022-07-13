@@ -12,6 +12,8 @@ $id = $_GET['id'];
 $str_consulta = "DELETE FROM projects WHERE id='$id'";
 echo $str_consulta;
 $sql = mysqli_query($conexao, $str_consulta)  or die(mysqli_error($db));
+$result = mysqli_query($conexao, "UPDATE resources SET projects = projects - 1 WHERE uid = '$uid'");
+
 
 header("Location: Manage-Projects.php");
 exit();

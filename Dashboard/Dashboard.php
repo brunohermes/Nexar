@@ -11,6 +11,28 @@
     $resulto = $conexao->query($sql2);
     $user_data = mysqli_fetch_assoc($resulto);
 
+    // $consultaWaiting = "SELECT * FROM projects WHERE status = 'Waiting for 3D Model'";
+    // $sqwait = mysqli_query($conexao, $consultaWaiting)  or die(mysqli_error($db));
+
+    // $waitresults = mysqli_query("SELECT * FROM projects WHERE status = 'Waiting for 3D Model'");
+    // $num_rowswait = mysqli_num_rows($waitresults);
+
+    
+    $rstwait = "SELECT * FROM projects WHERE status = 'Waiting for 3D Model'";
+    $reswait = $conexao->query($rstwait);
+    $finalwait = mysqli_num_rows($reswait);
+
+    $rstcanc = "SELECT * FROM projects WHERE status = 'Cancelled'";
+    $rescanc = $conexao->query($rstcanc);
+    $finalcancelled = mysqli_num_rows($rescanc);
+
+    $rstdone = "SELECT * FROM projects WHERE status = 'Done'";
+    $resdone = $conexao->query($rstdone);
+    $finaldone = mysqli_num_rows($resdone);
+   
+
+
+
     $fn = $user_data['firstname']." ".$user_data['lastname'];
     $plan = $user_data['plan'];
     $usrname = $user_data['firstname'];
@@ -149,16 +171,16 @@
 
                     <!-- block start -->
                     <div class="income">
-                    <i class='bx bx-qr-scan' ></i> 
+                    <i class='bx bx-bar-chart-square'></i>
                         <div class="middle">
                             <div class="left">
-                                <h3> Status</h3>
+                                <h3>Status</h3>
                                 <canvas id="pstats"></canvas>
                             </div>
                             <div class="progress">
                                 
                                 <div class="number">
-                                    <p></p>
+                                    <p>Keep track of your projects.</p>
                                 </div>
                             </div>
                         </div>
@@ -240,7 +262,7 @@
                 <i class='bx bx-menu-alt-left' ></i>
                 </button>
                 <div class="theme-toggler">
-                <i class='bx bxs-sun active' ></i>
+                <i class='bx bxs-sun' ></i>
                 <i class='bx bxs-moon'  ></i>
                 </div>
                 <div class="profile">
@@ -266,15 +288,38 @@
         </div>
     </div>
     
-
-
     <script>
         const sideMenu = document.querySelector("aside");
         const menuBtn = document.querySelector("#menu-btn");
         const closeBtn = document.querySelector("#closebtn");
         const themeToggler = document.querySelector(".theme-toggler");
         const news = document.getElementById("upd");
+      
+        var darkMode;
+        var lightMode;
+        var dTime = (new Date()).getHours(); //Get time of day 24h format
+        var dcheck;
         
+        if(dTime > 7 && dTime < 18){
+            console.log("day");
+            console.log(dTime);
+            dcheck = "day";
+        }else{
+            console.log("night");
+            console.log(dTime);
+            dcheck = "night";
+        }
+
+        if(dcheck == "night"){
+            document.body.classList.add('dark-theme-variables');
+            themeToggler.querySelector('i:nth-child(2)').classList.toggle('active');
+        }else if(dcheck == "day"){
+            document.body.classList.remove('dark-theme-variables');
+            themeToggler.querySelector('i:nth-child(1)').classList.toggle('active');
+        }
+
+
+
         menuBtn.addEventListener('click', () => {
             sideMenu.style.display = 'block';
         });
@@ -283,10 +328,14 @@
             sideMenu.style.display = 'none';
         });
         
+
+
+
         themeToggler.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme-variables');
             themeToggler.querySelector('i:nth-child(1)').classList.toggle('active');
             themeToggler.querySelector('i:nth-child(2)').classList.toggle('active');
+
             
         });
     </script>
@@ -340,7 +389,7 @@ const pstat = new Chart(ctxx, {
         labels: ['Cancelled', 'Waiting 3D model', 'Done'],
         datasets: [{
             label: 'Status',
-            data: [1,2,3],
+            data: [<?php echo $finalcancelled; ?> , <?php echo $finalwait; ?> , <?php echo $finaldone; ?> ],
             backgroundColor: [
                 'rgba(255, 97, 111, 1)',
                 'rgba(255, 187, 85, 1)',
@@ -368,12 +417,12 @@ new Chart(document.getElementById("scredits"), {
     labels: [1500,1600,1700,1750,1800,1850,1900,1950,1999,2050],
     datasets: [{ 
         data: [86,114,106,106,107,111,133,221,783,2478],
-        label: "Africa",
+        label: "Credits",
         borderColor: "#3e95cd",
         fill: false
       }, { 
         data: [282,350,411,502,635,809,947,1402,3700,5267],
-        label: "Asia",
+        label: "Amount",
         borderColor: "#8e5ea2",
         fill: false
       }

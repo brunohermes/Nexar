@@ -56,14 +56,7 @@
             die("This project doesnt exist!");
         } **/
     }
-
-
-    
     $page_title = "Files";
-  
-
-
-
 
 ?>
  <script>
